@@ -1,15 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('departmentsChart').getContext('2d');
 
+    // Получение элемента canvas для графика
+    const chartCanvas = document.getElementById('departmentsChart');
+    if (!chartCanvas) {
+        console.error('Element departmentsChart not found!');
+        return;
+    }
+
+    // Получение данных из data-атрибутов
+    const labels = JSON.parse(chartCanvas.dataset.labels || '[]');
+    const values = JSON.parse(chartCanvas.dataset.values || '[]');
+
+    // Создание графика
+    const ctx = chartCanvas.getContext('2d');
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: departmentsData.labels,
+            labels: labels,
             datasets: [{
                 label: 'Количество сотрудников',
-                data: departmentsData.data,
-                backgroundColor: 'rgba(60,141,188,0.8)',
-                borderColor: 'rgba(60,141,188,1)',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
@@ -21,11 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     ticks: {
                         stepSize: 1
                     }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
                 }
             }
         }

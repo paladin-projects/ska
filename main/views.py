@@ -1,8 +1,5 @@
 from django.shortcuts import render
 
-
-# Create your views here.
-
-# Хаб-страница, на которой можно выводить обь явления или вести список изменений. Мной не использовалась
+# Хаб-страница, на которой можно выводить обьявления или вести список изменений
 def main(request):
     return render(request, 'main.html')

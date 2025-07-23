@@ -58,7 +58,10 @@
                     <div class="col-12">
                         <div class="chart-container">
                             <h3 class="chart-title">Распределение сотрудников по отделам</h3>
-                            <canvas id="departmentsChart"></canvas>
+                            <canvas id="departmentsChart"
+                                data-labels='{{ departments_labels|safe }}'
+                                data-values='{{ departments_values|safe }}'
+                            ></canvas>
                         </div>
                     </div>
                 </div>
@@ -69,9 +72,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const departmentsData = {{ departments_data|safe }};
-</script>
-<script src="{% static 'js/statistics.js' %}"></script>
+<script src="{% static 'vendor/chartjs/js/chart.umd.js' %}"></script>
+<script src="{% static 'js/statistics.js' %}?v=1"></script>
 {% endblock %}

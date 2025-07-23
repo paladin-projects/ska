@@ -1,6 +1,62 @@
-*.sqlite3
-local_stuff/
-files/
-staticfiles/
+# Python
+*.py[cod]
 *.pyc
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+venv/
+.env
+*.log
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# Django
+*.sqlite3
+staticfiles/
+media/
+local_settings.py
 db.json
+celerybeat-schedule
+celerybeat.pid
+
+# IDE
+.idea/
+*.iml
+*.iws
+.idea_modules/
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Docker
+.docker/
+docker-compose.override.yml
+.env.docker
+*.env.local
+docker-compose.override.y*ml
+
+# Local
+files/
+tmp/
+temp/
+static/vendor

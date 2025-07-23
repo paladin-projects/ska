@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from self_assessment.models import Employees, Department
+from django.urls import reverse
 
 
 def main(request):
@@ -139,4 +140,4 @@ def user_logout(request):
     :return: редирект на страницу входа
     """
     logout(request)
-    return redirect('/auth/')
+    return redirect(reverse('auth:login'))

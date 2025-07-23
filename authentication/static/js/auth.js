@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             evt.preventDefault();
 
             try {
-                const response = await fetch("/auth/", {
+                const response = await fetch(window.urls.auth_login, {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -77,7 +77,7 @@ if (forms.registration) {
         const formData = new FormData(form);
 
         try {
-            const response = await fetch("/auth/registration", {
+            const response = await fetch(window.urls.auth_registration, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -111,33 +111,3 @@ if (forms.registration) {
         $username.style.borderColor = "";
     });
 }
-
-//if (forms.login) {
-//    forms.login.addEventListener("submit", async (evt) => {
-//        evt.preventDefault();
-//
-//        try {
-//            const response = await fetch("/auth", {
-//                method: "POST",
-//                headers: {
-//                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
-//                },
-//                body: new FormData(forms.login)
-//            });
-//
-//            if (response.ok) {
-//                const urlParams = new URLSearchParams(window.location.search);
-//                window.location.href = urlParams.get('next') || '/';
-//            }
-//
-//            else {
-//                const text = await response.text();
-//                showSnackbar(text || "Ошибка при входе");
-//            }
-//        }
-//
-//        catch (error) {
-//            showSnackbar("Произошла ошибка при попытке входа");
-//        }
-//    });
-//}

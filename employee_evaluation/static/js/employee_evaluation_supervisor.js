@@ -18,7 +18,7 @@ let filterIDCounter = -1;
  * Превентивный запрос списка подчиненных
  */
 document.addEventListener("DOMContentLoaded", ()=>{
-    fetch("/employee-evaluation/subordinates", {method: "GET"}).then(resp =>{
+    fetch(window.urls.employee_evaluation_subordinates, {method: "GET"}).then(resp =>{
         if (resp.ok){
             resp.text().then(data=>{
                 subordinates = JSON.parse(data).data
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
                     // Проверяем роль сотрудника
                     const role = el.dataset.role;
-                    
+
                     if (role === 'employee' && subordinates.indexOf(Number(el.querySelector("td").textContent)) !== -1){
                         el.classList.toggle("subordinate");
                     }
@@ -55,7 +55,7 @@ $supervisor_switch.addEventListener("click", (ev)=>{
 });
 
 /**
- * Метод, меняющий поля фильтра в зависимости от того, по какому значению ставится фильтр:
+ * Метод, меня��щий поля фильтра в зависимости от того, по какому значению ставится фильтр:
  * Total - суммарный счет по дисциплине - числовой
  * Дисциплина - уровень - выбор уровня
  */
@@ -155,7 +155,7 @@ $cert__class.addEventListener("change", ()=>{
 });
 
 /**
- * Строковое представление фильтра для его отображения в добавленные
+ * Строков��е представление фильтра для его отображения в добавленные
  * @param filter объект фильтра
  * @return {string} строковое представление фильтра
  */
@@ -202,7 +202,7 @@ function sendFilters() {
         return
     }
 
-    fetch("/employee-evaluation/subordinates/filter", {
+    fetch(window.urls.employee_evaluation_subordinates_filter, {
         method: "POST",
         headers:{"X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value},
         body: new URLSearchParams({"data": JSON.stringify({subordinates: subordinates, filters: filters})}),
@@ -234,7 +234,7 @@ function sendFilters() {
            });
        } else if (resp.status === 404) {
            resp.text().then(e =>{
-               showSnackbar("После отмеченного фильтра осталось 0 сущностей для фильтрации!");
+               showSnackbar("После отмеченного фильтра осталось 0 сущнос��ей для фильтрации!");
                document.querySelector(`.filter[data-id="${e}"]`).classList.add("failing-filter");
            });
        }
@@ -308,7 +308,7 @@ function clearFiltersFromTable() {
 }
 
 /**
- * Позволяет сохранить таблицу с отобранными сотрудниками в csv формате
+ * Позволяет сохранить таблицу с отобранными сотрудник��ми в csv формате
  */
 function saveCSV() {
     let csv_data = [];

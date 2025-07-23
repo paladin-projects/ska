@@ -89,7 +89,7 @@ INSERT INTO self_assessment_processes (process) VALUES
 ('ITIL/ITSM')
 ON CONFLICT DO NOTHING;
 CREATE TABLE IF NOT EXISTS "self_assessment_levels" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "weight" integer NOT NULL UNIQUE, "level" text NOT NULL UNIQUE, "description" text NOT NULL UNIQUE);
-INSERT INTO "self_assessment_levels" ("weight","level","description") VALUES
+INSERT OR REPLACE INTO "self_assessment_levels" ("weight","level","description") VALUES
 (0,'— Select your level —','A value indicating that there is no level selected for this field'),
 (1,'None','Have no knowledge on product, technology or process'),
 (2,'Basic','Have general knowledge on product, technology or process; can follow prepared instructions'),

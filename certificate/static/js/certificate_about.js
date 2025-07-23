@@ -17,7 +17,7 @@ $delete_button.addEventListener("click", ()=>{
  */
 $confirm_delete_button.addEventListener("click", ()=>{
     $delete_confirmation_modal.close();
-    fetch("/certificate/delete", {
+    fetch(window.urls.certificate_delete, {
         method: "POST",
         headers:{"X-CSRFToken": document.querySelector('input[name="csrfmiddlewaretoken"]').value},
         body: new URLSearchParams({"id": document.getElementById("id").textContent})

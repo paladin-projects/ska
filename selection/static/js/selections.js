@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function fetchDisciplines(product) {
-        fetch(`/selection/disciplines/${product}`)
+        fetch(`${window.urls.selection_disciplines}${product}`)
             .then(response => response.json())
             .then(data => {
                 disciplineSelect.innerHTML = '<option value="">Выберите дисциплину</option>';
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
             level: levelSelect.value
         };
 
-        fetch('/selection/employees?' + new URLSearchParams(params))
+        fetch(window.urls.selection_employees + '?' + new URLSearchParams(params))
             .then(response => response.json())
             .then(data => {
                 displayResults(data);

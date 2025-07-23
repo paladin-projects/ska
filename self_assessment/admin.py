@@ -1,9 +1,24 @@
 from django.contrib import admin
+from django import forms
 from .models import *
+
+
+class EmployeesForm(forms.ModelForm):
+
+    class Meta:
+        model = Employees
+        fields = ['user', 'name', 'department', 'role', 'subordinate_of']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.role in ['supervisor', 'admin']:
+            self.fields['subordinate_of'].disabled = True
+            self.fields['subordinate_of'].required = False
 
 
 @admin.register(Employees)
 class EmployeesAdmin(admin.ModelAdmin):
+    form = EmployeesForm
     list_display = ('name', 'user', 'get_department', 'role', 'get_subordinate_of')
     list_filter = ('role',)
     search_fields = ('name', 'department__name', 'user__username')
@@ -16,34 +31,15 @@ class EmployeesAdmin(admin.ModelAdmin):
     get_department.short_description = 'Отдел'
 
     def get_subordinate_of(self, obj):
-
         if obj.role == 'employee':
             return obj.subordinate_of
-
         return '-'
 
     get_subordinate_of.short_description = 'Руководитель'
 
-    def get_fields(self, request, obj=None):
-        fields = ['user', 'name', 'role']
-
-        if not obj or obj.role != 'admin':
-            fields.insert(2, 'department')
-
-        if obj and obj.role == 'employee' or not obj:
-            fields.append('subordinate_of')
-
-        return fields
-
-    def get_readonly_fields(self, request, obj=None):
-
-        if obj and obj.role in ['supervisor', 'admin']:
-            return ['subordinate_of']
-
-        return []
-
     class Media:
         js = ('js/employees_admin.js',)
+
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):

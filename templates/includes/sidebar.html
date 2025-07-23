@@ -7,33 +7,33 @@
             <ul class="navbar-nav me-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/profile' in request.path %}active{% endif %}" href="/profile">
+                        <a class="nav-link {% if request.resolver_match.namespace == 'profile' %}active{% endif %}" href="{% url 'profile:main' %}">
                             <i class="bi bi-person"></i> Профиль
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/self-assessment' in request.path %}active{% endif %}" href="/self-assessment">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'self_assessment' %}active{% endif %}" href="{% url 'self_assessment' %}">
                             <i class="bi bi-clipboard-check"></i> Квалификации
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/certificate' in request.path %}active{% endif %}" href="/certificate">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'certificate_main' %}active{% endif %}" href="{% url 'certificate_main' %}">
                             <i class="bi bi-award"></i> Сертификаты
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/selection' in request.path %}active{% endif %}" href="/selection">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'selection' %}active{% endif %}" href="{% url 'selection' %}">
                             <i class="bi bi-search"></i> Выборка
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/employee-evaluation' in request.path %}active{% endif %}" href="/employee-evaluation">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'employee_evaluation_main' %}active{% endif %}" href="{% url 'employee_evaluation_main' %}">
                             <i class="bi bi-graph-up"></i> Сводка
                         </a>
                     </li>
                     {% if role == 'admin' %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/control' in request.path %}active{% endif %}" href="{% url 'control:statistics' %}">
+                        <a class="nav-link {% if request.resolver_match.namespace == 'control' %}active{% endif %}" href="{% url 'control:statistics' %}">
                             <i class="bi bi-gear"></i> Управление
                         </a>
                     </li>
@@ -43,20 +43,20 @@
             <ul class="navbar-nav">
                 {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/logout' in request.path %}active{% endif %}" href="/auth/logout/">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}" href="{% url 'auth:logout' %}">
                             <i class="bi bi-box-arrow-right"></i> Выход
                         </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/' in request.path and not '/auth/registration' in request.path and not '/auth/logout' in request.path %}active{% endif %}"
-                           href="/auth/{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                           href="{% url 'auth:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
                             <i class="bi bi-box-arrow-in-right"></i> Вход
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if '/auth/registration' in request.path %}active{% endif %}"
-                           href="/auth/registration/{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'registration' %}active{% endif %}"
+                           href="{% url 'auth:registration' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
                             <i class="bi bi-person-plus"></i> Регистрация
                         </a>
                     </li>

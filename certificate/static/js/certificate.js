@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch('/certificate/', {
+        fetch(window.urls.certificate_main, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value

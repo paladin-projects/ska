@@ -1,3 +1,7 @@
+/* Специфичные стили для профиля
+-------------------------------------------------- */
+
+/* Контейнер профиля */
 .cards-container {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -6,63 +10,41 @@
     height: calc(100vh - 2rem);
 }
 
-.card-subtitle {
-    display: block;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-}
-
-.card-title {
-    display: block;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-.nav-section {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 1rem;
-    height: fit-content;
-}
-
-.radio-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.radio-card {
-    width: 100%;
-}
-
-.radio-card .card-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-}
-
-.radio-card .card-content i {
-    font-size: 1.25rem;
-}
-
-.content-section {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* Основная карточка */
+.card-main .card {
+    position: relative;
+    background: rgba(100, 100, 100, 0.15);
     border-radius: 12px;
     padding: 1.5rem;
+    transition: none !important;
+    transform: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.card-main .card:hover,
+.card-main .card:focus,
+.card-main .card:active {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 .content-wrapper {
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
+/* Секции профиля */
 .profile-section {
     display: none;
     opacity: 0;
@@ -74,6 +56,7 @@
     opacity: 1;
 }
 
+/* Шапка профиля */
 .profile-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -109,21 +92,7 @@
     margin: 0.5rem 0 0;
 }
 
-.info-card {
-    margin-bottom: 1.5rem;
-}
-
-.card-content {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 1.5rem;
-}
-
-.card-content h4 {
-    color: white;
-    margin-bottom: 1.5rem;
-}
-
+/* Информационные поля */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -156,86 +125,7 @@
     z-index: 1;
 }
 
-.info-item:has(.card-subtitle:contains("Роль")) {
-    background: linear-gradient(
-        45deg,
-        rgba(var(--dominant-color-rgb), 0.1),
-        rgba(255, 255, 255, 0.05)
-    );
-}
-
-.info-item:has(.card-subtitle:contains("Роль")) .card-title {
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.info-item:has(.card-title:contains("Администратор")) {
-    border-left: 3px solid var(--dominant-color, rgba(255, 255, 255, 0.3));
-}
-
-.info-item:has(.card-title:contains("Руководитель")) {
-    border-left: 3px solid rgba(255, 193, 7, 0.5);
-}
-
-.info-item:has(.card-title:contains("Сотрудник")) {
-    border-left: 3px solid rgba(13, 110, 253, 0.5);
-}
-
-.skill-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.badge {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    background: var(--dominant-color, rgba(255, 255, 255, 0.2));
-    color: white;
-}
-
-.certificate-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    color: white;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-control,
-.form-select {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    border-radius: 8px;
-    padding: 0.75rem;
-}
-
-.form-control:focus,
-.form-select:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
-    color: white;
-    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
-}
-
-.form-control::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.form-actions {
-    margin-top: 2rem;
-    text-align: right;
-}
-
+/* Медиа-запросы */
 @media (max-width: 1200px) {
     .cards-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -254,14 +144,6 @@
         height: auto;
     }
 
-    .nav-section {
-        height: auto;
-    }
-
-    .content-section {
-        height: auto;
-    }
-
     .cards-grid {
         grid-template-columns: 1fr;
     }
@@ -275,4 +157,122 @@
     .profile-header {
         text-align: center;
     }
+}
+
+.radio-cards-container.radio-cards-sm {
+    --min-card-width: 120px;
+    gap: 1.25rem;
+}
+
+/* Формы и поля ввода */
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-control,
+.form-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1rem;
+    height: auto;
+    width: 100%;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
+    color: white;
+    box-shadow: none;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group .form-control {
+    border-top-right-radius: 0.375rem !important;
+    border-bottom-right-radius: 0.375rem !important;
+    padding-right: 3rem;
+    position: relative;
+}
+
+.input-group .form-control:focus {
+    z-index: 1;
+}
+
+.input-group .password-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.input-group .password-toggle:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.input-group .password-toggle:focus {
+    outline: none;
+}
+
+.input-group .password-toggle i {
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+.form-label {
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.form-actions {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.btn-custom {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--dominant-color, rgba(255, 255, 255, 0.2));
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background: var(--dominant-color, rgba(255, 255, 255, 0.3));
+}
+
+.btn-custom-primary {
+    background: var(--dominant-color, #0d6efd);
+}
+
+.btn-custom-primary:hover {
+    background: var(--dominant-color-darker, #0b5ed7);
 }

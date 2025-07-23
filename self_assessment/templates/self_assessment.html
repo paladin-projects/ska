@@ -5,95 +5,34 @@
 {% block title %}Самооценка{% endblock %}
 
 {% block extra_css %}
-<!--<link rel="stylesheet" href="{% static 'css/self_assessment.css' %}" />-->
+<link rel="stylesheet" href="{% static 'css/self_assessment.css' %}" />
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <form id="assessment-form">
-                        {% csrf_token %}
-
-                        <div class="btn-group mb-4" role="group">
-                            {% for key, block in data.blocks.items %}
-                                <button type="button" class="btn btn-outline-primary block-button" data-block="{{ key }}">
-                                    {{ block.name }}
-                                </button>
-                            {% endfor %}
-                            <button type="button" class="btn btn-success" id="finish-button">Завершить</button>
+<div class="assessment-container">
+    <form id="assessment-form">
+        {% csrf_token %}
+        <div class="direction-selection">
+            {% for direction in directions %}
+                <div class="card direction-card" data-direction="{{ direction.name|lower }}" onclick="window.location.href='{{ direction.url }}'">
+                    <div class="card-content direction-content">
+                        <div class="card-icon direction-icon">
+                            <i class="bi {{ direction.icon }} pulse-ready"></i>
                         </div>
-
-                        {% for key, block in data.blocks.items %}
-                            <div id="{{ key }}" class="assessment-block" style="display: none;">
-                                <h3 class="mb-4">{{ block.name }}</h3>
-                                {% for product, disciplines in block.items %}
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            <h4 class="mb-0">{{ product }}</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            {% for discipline in disciplines %}
-                                                <div class="table-responsive mb-3">
-                                                    <h5>{{ discipline }}</h5>
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                {% for level in levels %}
-                                                                    <th class="text-center">{{ level.1 }}</th>
-                                                                {% endfor %}
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                {% for level in levels %}
-                                                                    <td class="text-center">
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                   name="{{ product|replace_dj:" |_" }}_{{ discipline|replace_dj:" |_" }}"
-                                                                                   value="{{ level.0 }}" required>
-                                                                        </div>
-                                                                    </td>
-                                                                {% endfor %}
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    </form>
+                        <div class="card-info">
+                            <h3 class="card-name direction-name" data-text="{{ direction.name }}">{{ direction.name }}</h3>
+                            <p class="card-description">{{ direction.items|length|pluralize:"продукт" }}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-    </div>
+    </form>
 </div>
 
-<div class="modal fade" id="restoreModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Восстановление данных</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Найдена незавершенная форма. Хотите продолжить?</p>
-                <p class="text-muted">(В случае отказа данные будут стёрты)</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="modal-accept">Продолжить</button>
-                <button type="button" class="btn btn-secondary" id="modal-decline">Очистить</button>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/self-assessment.js' %}"></script>
+<script src="{% static 'js/tooltip.js' %}"></script>
+<script src="{% static 'js/self_assessment.js' %}"></script>
 {% endblock %}

@@ -19,6 +19,6 @@ searchField.addEventListener('input', (e) => {
 employeeCards.forEach(card => {
     card.addEventListener('click', () => {
         const employeeId = card.dataset.id;
-        location.href = `/employee-evaluation/about?id=${employeeId}`;
+        location.href = `${window.urls.employee_evaluation_about}?id=${employeeId}`;
     });
 });

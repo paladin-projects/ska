@@ -1,399 +1,382 @@
+<div align="center">
 
 # Skills and Knowledge Assessment
 
+A Docker-based assessment system
+
+[![Docker][Docker-badge]][Docker-url]
+[![Docker-Install][Docker-Install-badge]][Docker-Install-url]
+[![Todo][Todo-badge]][Todo-url]
+[![Notes][Notes-badge]][Notes-url]
+[![License][License-badge]][License-url]
+[![Authors][Authors-badge]][Authors-url]
+
+</div>
+
 ## System Requirements
 
-### Windows
+<details>
+<summary>Windows</summary>
 
 - Windows 10/11
 - WSL 2
 - Docker Desktop for Windows
 - 4GB RAM minimum (8GB recommended)
 - Virtualization enabled in BIOS
+</details>
 
-### Linux
+<details>
+<summary>Linux</summary>
 
 - Any modern Linux distribution (Ubuntu 20.04+, Debian 11+, Fedora 35+, etc.)
 - Docker Engine
 - Docker Compose
 - 2GB RAM minimum (4GB recommended)
+</details>
 
 ## Usage
 
-Docker is required, see Docker Installation
+### Linux Setup
+> Docker is required, see [Docker Installation](DOCKER_INSTALL.md)
 
-### Windows
-WSL 2 and Hyper-V is required
+1. Start Docker services:
+   ```bash
+   # Start Docker daemon
+   sudo systemctl start docker
+   
+   # Enable Docker to start on boot
+   sudo systemctl enable docker
+   ```
+
+2. Build the project:
+   ```bash
+   # Build and start containers (first run will take several minutes)
+   docker compose up --build
+   ```
+
+3. Set up environment:
+   ```bash
+   # Generate environment variables from template
+   docker compose exec web python manage.py setenv
+   
+   # Create unique secret key for security
+   docker compose exec web python manage.py keygen
+   
+   # Apply changes by restarting containers
+   docker compose restart
+   ```
+
+4. Access the application:
+   - 🌐 [Main Interface](http://127.0.0.1:80/)
+   - ⚙️ [Admin Panel](http://127.0.0.1:80/admin)
+
+### Windows Setup
+> Docker is required, see [Docker Installation](DOCKER_INSTALL.md)
 
 1. Launch Docker Desktop
-2. At the first launch, build docker from project directory:
+   > Ensure WSL 2 and Hyper-V are enabled
+
+2. Follow the same steps as Linux setup:
+   ```bash
+   # Build and start containers (first run will take several minutes)
+   docker compose up --build
    
-	```
-	docker compose up --build
-	```
-
-3. Perform the necessary migrations:
+   # Generate environment variables from template
+   docker compose exec web python manage.py setenv
    
-  	```
-  	docker compose exec web python manage.py makemigrations
-  
-  	docker compose exec web python manage.py migrate
-  	```
-
-4. Connect to:
-
-   	<http://127.0.0.1:8000/>
+   # Create unique secret key for security
+   docker compose exec web python manage.py keygen
    
-   or
+   # Apply changes by restarting containers
+   docker compose restart
+   ```
 
-   	<http://127.0.0.1:8000/admin>
+3. Access the application:
+   - 🌐 [Main Interface](http://127.0.0.1:80/)
+   - ⚙️ [Admin Panel](http://127.0.0.1:80/admin)
 
-### Linux
+> **Note**: First build may take several minutes depending on your internet connection and system performance
 
-1. Launch docker services if you haven't already done so:
-   
-	```
-	sudo systemctl start docker
- 
-	sudo systemctl enable docker
-	```
+## Common Commands
 
-3. At the first launch, build docker from project directory:
-   
-	```
-	docker compose up --build
-	```
+### Container Management
 
-4. Perform the necessary migrations:
-   
-  	```
-  	docker compose exec web python manage.py makemigrations
-  
-  	docker compose exec web python manage.py migrate
-  	```
+```bash
+# Start containers
+docker compose start
 
-5. Connect to:
+# Stop containers (preserve data)
+docker compose stop
 
-   	<http://127.0.0.1:8000/>
-   
-   or
+# Restart containers
+docker compose restart
 
-   	<http://127.0.0.1:8000/admin>
+# Stop and remove containers
+docker compose down
 
-### Common usage
+# Full cleanup (including volumes)
+docker compose down -v
 
-- Running program:
-  
-	```
-	docker compose start
-	```
+# Start containers after a full stop
+docker compose up
 
-- Stopping the program while saving containers:
-  
-	```
-	docker compose stop
-	```
+# Rebuild and start
+docker compose up --build
+```
 
-- Full stop with container removal:
-  
-	```
-	docker compose down
-	```
+### Development Commands
 
-	- Complete cleaning, including volumes:
-   
-		 ```
-		 docker compose down -v
-		 ```
+```bash
+# Database migrations
+docker compose exec web python manage.py makemigrations
+docker compose exec web python manage.py migrate
 
-- Running after a full stop:
-  
-  	```
-  	docker compose up
-  	```
-  
-	- Rebuilding docker:
-   
-		 ```
-		 docker compose up --build
-		 ```
+# Create superuser
+docker compose exec web python manage.py createsuperuser
 
-- Interactions with migrations:
-  
-  	```
-  	docker compose exec web python manage.py makemigrations
-  
-  	docker compose exec web python manage.py migrate
-  	```
+# View logs
+docker compose logs
 
-- Creating a superuser:
-  
-  	```
-	docker compose exec web python manage.py createsuperuser
-  	```
+# Environment setup
+docker compose exec web python manage.py setenv
+docker compose exec web python manage.py setenv --debug  # Debug mode (debug runserver is used as an automatic startup server)
 
-- View container logs:
-  
- 	```
-  	docker compose logs
-  	```
+# Generate secret key
+docker compose exec web python manage.py keygen
+docker compose exec web python manage.py keygen --force  # Force regenerate
+```
+
+### Database Management
+
+> **Note**:
+> - All backup operations automatically create a `backups/{db_name}` directory if it doesn't exist
+> - When restoring from a backup, the current state is automatically backed up
+> - In case of restore failure, automatic rollback to previous state occurs
+> - Backups with infinite retention are specially marked
+> - The `-list` command shows information about size, age, and remaining retention period of backups
+
+```bash
+# Initialize Database
+docker compose exec web python manage.py setdb  # Default initialization (uses db/ska-init.sql and db/db.sqlite3)
+docker compose exec web python manage.py setdb --source path/to/init.sql --db path/to/database.sqlite3  # Custom source and path
+docker compose exec web python manage.py setdb --force  # Force initialization (overwrite existing database)
+
+# Create Backup
+docker compose exec web python manage.py setdb --backup  # Create backup with default retention (30 days)
+docker compose exec web python manage.py setdb --backup -days 10  # Create backup with 10 days retention
+docker compose exec web python manage.py setdb --backup -days -1  # Create backup with infinite retention
+
+# List Backups
+docker compose exec web python manage.py setdb --backup -list  # Show latest backup info
+docker compose exec web python manage.py setdb --backup -list -latest  # Show latest backup info (alternative)
+docker compose exec web python manage.py setdb --backup -list -all  # List all backups with retention info
+docker compose exec web python manage.py setdb --backup -list 20240101_120000  # Show specific backup info
+
+# Delete Backups
+docker compose exec web python manage.py setdb --backup -delete  # Delete latest backup (requires confirmation)
+docker compose exec web python manage.py setdb --backup -delete -latest  # Delete latest backup (alternative)
+docker compose exec web python manage.py setdb --backup -delete -all  # Delete all backups (requires confirmation)
+docker compose exec web python manage.py setdb --backup -delete 20240101_120000  # Delete specific backup
+
+# Restore from Backup
+docker compose exec web python manage.py setdb --backup -restore  # Restore from latest backup (auto-backup before restore)
+docker compose exec web python manage.py setdb --backup -restore -latest  # Restore from latest backup (alternative)
+docker compose exec web python manage.py setdb --backup -restore 20240101_120000  # Restore from specific backup
+
+# Manage Retention Periods
+docker compose exec web python manage.py setdb --backup -days 15  # Create new backup with 15 days retention
+docker compose exec web python manage.py setdb --backup -days 15 -latest  # Set 15 days retention for latest backup
+docker compose exec web python manage.py setdb --backup -days 15 -all  # Set 15 days retention for all backups
+docker compose exec web python manage.py setdb --backup -days 15 20240101_120000  # Set 15 days retention for specific backup
+docker compose exec web python manage.py setdb --backup -days -1 -latest  # Set infinite retention for latest backup
+
+# Dry Run Mode (Simulation)
+docker compose exec web python manage.py setdb --dry-run  # Simulate database initialization
+docker compose exec web python manage.py setdb --backup --dry-run  # Simulate backup creation
+docker compose exec web python manage.py setdb --backup -restore -latest --dry-run  # Simulate restore operation
+docker compose exec web python manage.py setdb --backup -delete -latest --dry-run  # Simulate backup deletion
+docker compose exec web python manage.py setdb --backup -days 15 -latest --dry-run  # Simulate retention period change
+
+# Combined Operations
+docker compose exec web python manage.py setdb --force --dry-run  # Simulate forced initialization
+docker compose exec web python manage.py setdb --backup -days 15 -latest --dry-run  # Simulate retention change for latest backup
+docker compose exec web python manage.py setdb --backup -restore -latest --dry-run  # Simulate restore from latest backup with auto-backup
+```
+
+### Server Management
+
+```bash
+# Run release server
+docker compose exec web python manage.py runrelease
+
+# Custom config (must be located in ska/management/release/)
+docker compose exec web python manage.py runrelease --config custom.conf.py
+
+# Debug server
+docker compose exec web python manage.py runserver
+```
 
 ## Troubleshooting
 
-### Common Issues
+<details>
+<summary>Docker Service Won't Start</summary>
 
-- If Docker service fails to start:
-  
-	```
-	sudo systemctl status docker
- 
-	sudo journalctl -xu docker
-	```
+### Symptoms
+- Docker service fails to start
+- `docker` commands return connection errors
 
-- If permission denied:
+### Solution
+Check service status and logs:
+```bash
+# View service status
+sudo systemctl status docker
 
-  	Execute the command on behalf of the superuser or add the user to the docker group natively:
+# Check detailed logs
+sudo journalctl -xu docker
 
-  	- Run:
-  	  
-		```
- 		ls -l /var/run/docker.sock
-  	
- 		groups
- 		```
+# Restart service
+sudo systemctl restart docker
+```
+</details>
 
-   	- If the docker group is not in the list, run:
-   	  
-		```
-		sudo usermod -aG docker $USER
+<details>
+<summary>Permission Denied Errors</summary>
 
-		newgrp docker
- 		```
-      	
-- If ports are already in use:
-  
-	```
- 	sudo lsof -i :8000
- 	```
+### Symptoms
+- "Permission denied" when running Docker commands
+- Access denied to Docker socket
 
-# Docker Installation
+### Diagnosis
+```bash
+# Check Docker socket permissions
+ls -l /var/run/docker.sock
 
-## Windows
+# View current user groups
+groups
+```
 
-1. Install Docker Desktop for Windows:
+### Solutions
+1. Add user to Docker group (recommended):
+   ```bash
+   # Add current user to docker group
+   sudo usermod -aG docker $USER
    
-	- Manual Installation:
-		- Go to the official website: <https://www.docker.com/products/docker-desktop>
-		- Download Docker Desktop Installer for Windows
-		- Run the installer and follow the instructions
+   # Activate changes
+   newgrp docker
+   ```
 
-	- PowerShell Installation:
+2. Temporary fix (not recommended):
+   ```bash
+   # Run command with sudo
+   sudo docker [command]
+   ```
+</details>
 
-		```
-		$dockerUrl = "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
-  
-		$installerPath = "$env:TEMP\DockerDesktopInstaller.exe"
-  
-		Invoke-WebRequest -Uri $dockerUrl -OutFile $installerPath
-  
-		Start-Process -Wait $installerPath -ArgumentList "install --quiet"
-  
-		Remove-Item $installerPath
-		```
+<details>
+<summary>Port Conflicts</summary>
 
-3. Enable the WSL 2 and Hyper-V. To do this, open PowerShell from the administrator and run:
+### Symptoms
+- "Port is already in use" error
+- Container fails to start due to port binding issues
+
+### Solutions
+1. Find process using the port:
+   ```bash
+   # Replace PORT with the conflicting port number
+   sudo lsof -i :PORT
    
-	```
-	dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
- 
-	dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
- 
-	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
-	```
+   # Alternative using netstat
+   sudo netstat -tulpn | grep PORT
+   ```
 
-5. Reboot system
-6. After reboot:
+2. Resolve the conflict:
+   ```bash
+   # Kill the process using the port
+   sudo kill $(sudo lsof -t -i:PORT)
    
-	- Launch Docker Desktop
-	- Wait for full initialization
-	- Check the installation. Open PowerShell and run:
+   # Or modify docker-compose.yml to use different ports
+   ```
+</details>
 
-		```
-		docker --version
-		```
+<details>
+<summary>Environment File Issues</summary>
 
-	- If the installation went well, see Usage
+### Symptoms
+- Cannot modify .env file
+- "Permission denied" when running setenv command
 
-## Linux
-
-### Installation
-
-#### Ubuntu/Debian
-
-1. System Preparation:
+### Solutions
+1. Fix permissions:
+   ```bash
+   # Make .env file writable
+   sudo chmod 666 .env
    
-	```
-	sudo apt update
- 	
-	sudo apt upgrade -y
+   # Or change ownership
+   sudo chown $USER:$USER .env
+   ```
 
- 	sudo mkdir -p /etc/apt/keyrings
-	```
-
-3. Install Prerequisites:
+2. Create new .env file:
+   ```bash
+   # Backup existing file
+   cp .env .env.backup
    
-	```
-	sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common
-	```
+   # Generate new environment file
+   docker compose exec web python manage.py setenv
+   ```
+</details>
 
-5. Add Docker's official GPG key and Docker Repository:
-   
-   	```
-	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    	
-	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
-	
-	sudo apt update
-	```
+<details>
+<summary>Common Runtime Issues</summary>
 
-	- If you have these errors:
+### Container Won't Start
+```bash
+# View container logs
+docker compose logs
 
-		**Malformed entry 1 in list file /etc/apt/sources.list.d/docker.list**
-   
-		**The list of sources could not be read**
+# Rebuild containers
+docker compose up --build
 
-		Use:
+# Full reset
+docker compose down -v
+docker compose up --build
+```
 
-   		```
-		sudo rm -f /etc/apt/keyrings/docker.gpg
-    	
-		sudo rm -f /etc/apt/sources.list.d/docker.list
-	
-		curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
- 
-		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list
- 
-		sudo apt update
-		```
+### Database Connection Issues
+```bash
+# Check if database container is running
+docker compose ps
 
-7. Install Docker:
-   
-	```
-	sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-	```
+# Reset database container
+docker compose rm -f db
+docker compose up -d db
+```
 
-4. Start and enable Docker service:
-   
-	```
-	sudo systemctl start docker
- 
-	sudo systemctl enable docker
-	```
+### Memory Issues
+```bash
+# View container resource usage
+docker stats
 
-#### Arch Linux
+# Clear Docker system
+docker system prune -a
+docker volume prune
+```
+</details>
 
-1. System Preparation:
+<!-- Badges -->
+[Docker-badge]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
 
-	```
-	sudo pacman -Syu
-	```
+[Docker-Install-badge]: https://img.shields.io/badge/DOCKER-Installation-2496ED?style=for-the-badge
+[Docker-Install-url]: DOCKER_INSTALL.md
 
-2. Install Docker:
-   
-	```
-	sudo pacman -S docker docker-compose
-	```
+[Todo-badge]: https://img.shields.io/badge/TODO-Roadmap-red?style=for-the-badge
+[Todo-url]: TODO.md
 
-4. Start and enable Docker service:
-   
-	```
-	sudo systemctl start docker
- 
-	sudo systemctl enable docker
-	```
+[Notes-badge]: https://img.shields.io/badge/NOTES-Documentation-yellow?style=for-the-badge
+[Notes-url]: NOTES.md
 
-#### Fedora
+[License-badge]: https://img.shields.io/badge/License-GPL%20v3-blue.svg?style=for-the-badge
+[License-url]: LICENSE
 
-1. System Preparation:
-
-	```
-	sudo dnf update -y
-	```
-
-2. Add Docker Repository:
-   
-	```
-	sudo dnf -y install dnf-plugins-core
- 
-	sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-
- 	sudo dnf update
-	```
-
-4. Install Docker:
-   
-	```
-	sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-	```
-
-6. Start and enable Docker service:
-   
-	```
-	sudo systemctl start docker
- 
-	sudo systemctl enable docker
-	```
-
-#### CentOS/RHEL
-
-1. System Preparation:
-
-	```
-	sudo yum update -y
-	```
-
-2. Add Docker Repository:
-   
-	```
-	sudo yum install -y yum-utils
- 
-	sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-
- 	sudo yum update
-	```
-
-4. Install Docker:
-   
-	```
-	sudo yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-	```
-
-6. Start and enable Docker service:
-   
-	```
-	sudo systemctl start docker
- 
-	sudo systemctl enable docker
-	```
-
-### Post-Installation
-
-1. Add User to Docker Group:
-   
-	```
-	sudo usermod -aG docker $USER
- 
-	newgrp docker
-	```
-
-3. Verify Installation:
-   
-	```
-	docker --version
-	
- 	docker compose version
- 	
-	sudo systemctl status docker
-	```
-
-	If the installation went well, see Usage
+[Authors-badge]: https://img.shields.io/badge/AUTHORS-Contributors-orange?style=for-the-badge
+[Authors-url]: AUTHORS.md

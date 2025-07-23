@@ -1,3 +1,5 @@
+"""Конфигурация декораторов проекта"""
+
 from functools import wraps
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -6,6 +8,19 @@ from self_assessment.models import Employees
 def role_required(roles):
 
     def decorator(view_func):
+        """
+        Декоратор для проверки роли пользователя.
+
+        Проверяет наличие у пользователя необходимой роли для доступа к представлению.
+        Если роль не соответствует требуемой, перенаправляет на главную страницу.
+        Если профиль сотрудника не найден, осуществляет выход из системы.
+
+        Args:
+            roles: Список разрешенных ролей
+
+        Returns:
+            Функция-обертка для проверки роли
+        """
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
 

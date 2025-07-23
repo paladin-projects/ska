@@ -1,8 +1,21 @@
+"""
+Модели проекта.
+
+Определяют структуру данных для:
+- Отделов и сотрудников
+- Уровней компетенций
+- Оборудования и ПО
+- Процессов и задач
+- Навыков сотрудников
+"""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+
 class Department(models.Model):
+    """Модель отдела компании"""
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -15,8 +28,14 @@ class Department(models.Model):
 
 
 class Employees(models.Model):
+    """
+    Модель сотрудника.
 
-    # Связь с пользователем - обязательное поле
+    Связывает пользователя системы с его профессиональными данными:
+    - Отделом
+    - Руководителем
+    - Ролью в системе
+    """
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -26,7 +45,6 @@ class Employees(models.Model):
         blank=False
     )
 
-    # ФИО сотрудника - обязательное поле
     name = models.CharField(
         max_length=100,
         unique=True,
@@ -35,7 +53,6 @@ class Employees(models.Model):
         blank=False
     )
 
-    # Отдел сотрудника - может быть пустым только для администраторов
     department = models.ForeignKey(
         Department,
         on_delete=models.DO_NOTHING,
@@ -44,7 +61,6 @@ class Employees(models.Model):
         verbose_name="Отдел"
     )
 
-    # Руководитель - может быть пустым для руководителей и администраторов
     subordinate_of = models.ForeignKey(
         'self',
         on_delete=models.DO_NOTHING,
@@ -54,7 +70,6 @@ class Employees(models.Model):
         verbose_name="Руководитель"
     )
 
-    # Роль - обязательное поле
     role = models.CharField(
         max_length=20,
         choices=[
@@ -68,8 +83,8 @@ class Employees(models.Model):
         blank=False
     )
 
-    # Валидация данных модели
     def clean(self):
+        """Валидация данных модели"""
         super().clean()
 
         if self.role in ['supervisor', 'admin'] and self.subordinate_of:
@@ -77,12 +92,11 @@ class Employees(models.Model):
 
         if self.role == 'admin':
             self.department = None
-
         elif not self.department:
             raise ValidationError({'department': 'This field is required.'})
 
-    # Переопределение метода сохранения для автоматической валидации данных
     def save(self, *args, **kwargs):
+        """Сохранение с автоматической валидацией и обновлением данных пользователя"""
         self.clean()
         super().save(*args, **kwargs)
 
@@ -98,10 +112,11 @@ class Employees(models.Model):
     class Meta:
         verbose_name = "Сотрудник"
         verbose_name_plural = "Сотрудники"
-        ordering = ['name'] # Сортировка по умолчанию по ФИО
+        ordering = ['name']
 
 
 class Levels(models.Model):
+    """Модель уровней компетенции"""
     weight = models.IntegerField(unique=True, verbose_name="Вес")
     level = models.TextField(unique=True, verbose_name="Уровень")
     description = models.TextField(unique=True, verbose_name="Описание")
@@ -116,6 +131,7 @@ class Levels(models.Model):
 
 
 class Hardware(models.Model):
+    """Модель оборудования"""
     product = models.TextField(unique=True, verbose_name="Продукт")
 
     def __str__(self):
@@ -128,6 +144,7 @@ class Hardware(models.Model):
 
 
 class Software(models.Model):
+    """Модель программного обеспечения"""
     product = models.TextField(unique=True, verbose_name="Продукт")
 
     def __str__(self):
@@ -140,6 +157,7 @@ class Software(models.Model):
 
 
 class Processes(models.Model):
+    """Модель рабочих процессов"""
     process = models.TextField(unique=True, verbose_name="Процесс")
 
     def __str__(self):
@@ -152,6 +170,7 @@ class Processes(models.Model):
 
 
 class TaskHW(models.Model):
+    """Модель задач по работе с оборудованием"""
     task = models.TextField(unique=True, verbose_name="Задача")
 
     def __str__(self):
@@ -164,6 +183,7 @@ class TaskHW(models.Model):
 
 
 class TaskSW(models.Model):
+    """Модель задач по работе с ПО"""
     task = models.TextField(unique=True, verbose_name="Задача")
 
     def __str__(self):
@@ -176,6 +196,11 @@ class TaskSW(models.Model):
 
 
 class SkillsHW(models.Model):
+    """
+    Модель навыков работы с оборудованием.
+
+    Связывает сотрудника с его компетенциями по работе с конкретным оборудованием.
+    """
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, verbose_name="Сотрудник")
     product = models.ForeignKey(Hardware, on_delete=models.DO_NOTHING, to_field="product", verbose_name="Продукт")
     task = models.ForeignKey(TaskHW, on_delete=models.DO_NOTHING, to_field="task", verbose_name="Задача")
@@ -183,6 +208,7 @@ class SkillsHW(models.Model):
     time = models.DateTimeField(auto_now_add=True, verbose_name="Время оценки")
 
     def get_score(self):
+        """Получение числового значения уровня компетенции"""
         return self.level.weight if self.level else 0
 
     def __str__(self):
@@ -195,6 +221,11 @@ class SkillsHW(models.Model):
 
 
 class SkillsSW(models.Model):
+    """
+    Модель навыков работы с ПО.
+
+    Связывает сотрудника с его компетенциями по работе с конкретным ПО.
+    """
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, verbose_name="Сотрудник")
     product = models.ForeignKey(Software, on_delete=models.DO_NOTHING, to_field="product", verbose_name="Продукт")
     task = models.ForeignKey(TaskSW, on_delete=models.DO_NOTHING, to_field="task", verbose_name="Задача")
@@ -202,6 +233,7 @@ class SkillsSW(models.Model):
     time = models.DateTimeField(auto_now_add=True, verbose_name="Время оценки")
 
     def get_score(self):
+        """Получение числового значения уровня компетенции"""
         return self.level.weight if self.level else 0
 
     def __str__(self):
@@ -214,6 +246,11 @@ class SkillsSW(models.Model):
 
 
 class SkillsPR(models.Model):
+    """
+    Модель навыков по процессам.
+
+    Связывает сотрудника с его компетенциями по рабочим процессам.
+    """
     employee = models.ForeignKey(Employees, on_delete=models.CASCADE, verbose_name="Сотрудник")
     process = models.ForeignKey(Processes, on_delete=models.DO_NOTHING, to_field="process", verbose_name="Процесс")
     level = models.ForeignKey(Levels, on_delete=models.DO_NOTHING, to_field="level", verbose_name="Уровень")

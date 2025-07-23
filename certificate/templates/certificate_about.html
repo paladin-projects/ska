@@ -1,18 +1,15 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Certificate | About</title>
-    <link rel="stylesheet" href="{% static 'GlobalCSS/sidebar-sticky.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/certificate_about.css' %}" />
-    <link rel="stylesheet" href="{% static 'GlobalCSS/snackbar.css' %}" />
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body>
-{% csrf_token %}
+
+{% block title %}Certificate | About{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/certificate_about.css' %}" />
+{% endblock %}
+
+{% block content %}
 <div id="content">
-{%  include "sidebar.html" %}
+{% include "sidebar.html" %}
 <div class="row">
     <div id="info" class="column left">
         <p><button onclick="location.href = '/certificate'" class="navigation-button">Назад</button></p>
@@ -33,22 +30,20 @@
         </div>
         <div>
             <p>
-{#                <button id="edit" class="navigation-button">Редактировать</button>#}
-{#                <button id="finish" style="display: none" class="navigation-button">Сохранить</button>#}
                 <button id="delete" class="navigation-button">Удалить</button>
             </p>
         </div>
     </div>
     <div id="file" class="column right">
         {% if certificate.is_pdf %}
-        	<embed id="pdf" src="{{ certificate.file }}">
+            <embed id="pdf" src="{{ certificate.file }}">
         {% else %}
-{#            <button id="download-image" class="navigation-button">Скачать</button>#}
             <img id="image" src="{{ certificate.file }}" alt="Certificate" width="100%">
         {% endif %}
     </div>
 </div>
 </div>
+
 <dialog id="delete-confirmation-modal">
     <p>
         Вы уверены, что хотите удалить данный сертификат?
@@ -58,9 +53,10 @@
         <button id="cancel-delete" class="navigation-button">Нет</button>
     </p>
 </dialog>
+{% endblock %}
 
-<script src={% static "GlobalJS/sidebar.js" %}></script>
-<script src={% static "GlobalJS/snackbar.js" %}></script>
-<script src={% static "JS/certificate_about.js" %}></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'GlobalJS/sidebar.js' %}"></script>
+<script src="{% static 'GlobalJS/snackbar.js' %}"></script>
+<script src="{% static 'JS/certificate_about.js' %}"></script>
+{% endblock %}

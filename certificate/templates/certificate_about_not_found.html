@@ -1,18 +1,14 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en" style="padding: 0; margin: 0">
-<head>
-    <meta charset="UTF-8">
-    <title>About | Not Found</title>
-    <link rel="stylesheet" href="{% static 'GlobalCSS/sidebar.css' %}" />
-{#    <link rel="stylesheet" href="{% static 'GlobalCSS/Header.css" %}' />#}
-    <link rel="shortcut icon" href="https://cdn-icons-png.freepik.com/512/709/709612.png" />
-</head>
-<body style="padding: 0; margin: 0">
-{%  include "sidebar.html" %}
+
+{% block title %}About | Not Found{% endblock %}
+
+{% block content %}
 <div style="margin: auto; width: fit-content;">
-    <img src="{% static "Images/not_found.png" %}" alt="File not found">
+    <img src="{% static 'Images/not_found.png' %}" alt="File not found">
 </div>
-<script src="{% static "GlobalJS/sidebar.js" %}"></script>
-</body>
-</html>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'GlobalJS/sidebar.js' %}"></script>
+{% endblock %}

@@ -88,7 +88,7 @@ def main(request):
                     'id': emp.id,
                     'name': emp.name,
                     'department': emp.department.name if emp.department else "Не указан",
-                    'role': emp.role, # Обработка роли для фильтрации на фронтенде
+                    'role': emp.role,
                     'top_skills': {
                         'hardware': [{'name': skill.product.product, 'score': skill.get_score()} for skill in
                                      hw_skills],
@@ -119,7 +119,7 @@ def main(request):
             data = {
                 "employees": employees_data,
                 "departments": Department.objects.all(),
-                "is_admin": employee.role == 'admin',  # Флаг администратора для шаблона
+                "is_admin": employee.role == 'admin',
                 "skill_categories": {
                     "hardware": Hardware.objects.values_list('product', flat=True),
                     "software": Software.objects.values_list('product', flat=True),

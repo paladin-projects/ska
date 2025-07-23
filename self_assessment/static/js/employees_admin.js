@@ -8,37 +8,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const departmentRow = departmentField?.closest('.form-row');
         const subordinateRow = subordinateField?.closest('.form-row');
 
-        if (departmentRow) {
+        if (departmentRow && departmentField) {
+            departmentRow.style.display = '';
 
             if (selectedRole === 'admin') {
-                departmentRow.style.display = 'none';
+                departmentField.disabled = true;
                 departmentField.value = '';
                 departmentField.required = false;
             }
 
             else {
-                departmentRow.style.display = '';
+                departmentField.disabled = false;
                 departmentField.required = true;
-
-                if (!departmentField.closest('form')) {
-                    departmentRow.appendChild(departmentField);
-                }
             }
         }
 
-        if (subordinateRow) {
+        if (subordinateRow && subordinateField) {
+            subordinateRow.style.display = '';
 
             if (selectedRole === 'employee') {
-                subordinateRow.style.display = '';
+                subordinateField.disabled = false;
                 subordinateField.required = true;
-
-                if (!subordinateField.closest('form')) {
-                    subordinateRow.appendChild(subordinateField);
-                }
             }
 
             else {
-                subordinateRow.style.display = 'none';
+                subordinateField.disabled = true;
                 subordinateField.value = '';
                 subordinateField.required = false;
             }
