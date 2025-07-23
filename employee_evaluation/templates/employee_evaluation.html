@@ -4,97 +4,172 @@
 {% block title %}Сотрудники{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/cards.css' %}" />
+<link rel="stylesheet" href="{% static 'css/employee_evaluation.css' %}" />
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tooltip.js' %}"></script>
+<script src="{% static 'js/radiocards.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-<div class="employee-evaluation-container">
+<div class="cards-split-equal">
 
-    <div class="main-card">
-        <div class="card filters-card">
-            <div class="card-body">
-                <h4 class="text-light mb-4">Фильтры</h4>
+    <!-- Левая колонка с фильтрами -->
+    <div class="card card-glow card-sidebar">
+        <div class="card-body">
+            <h4 class="text-light mb-4">Фильтры</h4>
 
-                <div class="search-box mb-4">
-                    <input type="text" class="form-control" placeholder="Поиск..." id="table-search">
-                    <i class="bi bi-search"></i>
+            <div class="search-box mb-4">
+                <input type="text" class="form-control" placeholder="Поиск по имени или отделу..." id="table-search">
+                <i class="bi bi-search"></i>
+            </div>
+
+            {% if is_supervisor %}
+            <div class="filter-group">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="supervisor-switch">
+                    <label class="form-check-label text-light" for="supervisor-switch">
+                        Только подчиненные
+                    </label>
                 </div>
+            </div>
+            {% endif %}
 
-                {% if is_supervisor %}
-                <div class="filter-group">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="supervisor-switch">
-                        <label class="form-check-label text-light" for="supervisor-switch">
-                            Только подчиненные
-                        </label>
-                    </div>
+            <div class="filter-group">
+                <h5 class="text-light">Отдел</h5>
+                <div class="chip-group">
+                    {% for dept in departments %}
+                    <label class="chip chip-primary">
+                        <input type="checkbox" name="department" value="{{ dept.id }}">
+                        <span>{{ dept.name }}</span>
+                    </label>
+                    {% endfor %}
                 </div>
-                {% endif %}
+            </div>
 
-                <div class="filter-group">
-                    <h5 class="text-light">Отдел</h5>
-                    <div class="filter-chips">
-                        {% for dept in departments %}
-                        <label class="chip">
-                            <input type="checkbox" name="department" value="{{ dept.id }}">
-                            <span>{{ dept.name }}</span>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="filter-group">
-                    <h5 class="text-light">Навыки</h5>
-                    <div class="accordion" id="skillsAccordion">
-
-                        <div class="accordion-item">
-                            <h6 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hardwareCollapse">
-                                    Hardware
-                                </button>
-                            </h6>
-                            <div id="hardwareCollapse" class="accordion-collapse collapse">
-                                <div class="accordion-body">
+            <div class="filter-group">
+                <h5 class="text-light">Навыки</h5>
+                <div class="accordion" id="skillsAccordion">
+                    <div class="accordion-item">
+                        <h6 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#hardwareCollapse">
+                                Hardware
+                            </button>
+                        </h6>
+                        <div id="hardwareCollapse" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <div class="search-box mb-3">
+                                    <input type="text" class="form-control" placeholder="Поиск по навыкам Hardware..." data-search-category="hardware">
+                                    <i class="bi bi-search"></i>
+                                </div>
+                                <div class="radio-cards-container radio-cards-sm" style="--grid-columns: 3;">
                                     {% for skill in skill_categories.hardware %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hw_skill" value="{{ skill }}">
-                                        <label class="form-check-label text-light">{{ skill }}</label>
+                                    <div class="tooltip-wrapper">
+                                        <label class="radio-card">
+                                            <input type="radio" name="skill_hardware" value="{{ skill }}"
+                                                   class="d-none" data-category="hardware"
+                                                   {% if skill in selected_skills %}checked{% endif %}>
+                                            <div class="card-content">
+                                                <i class="bi bi-cpu"></i>
+                                                <h3 class="card-title">{{ skill }}</h3>
+                                            </div>
+                                        </label>
+                                        <div class="custom-tooltip tooltip-right">
+                                            <div class="custom-tooltip-title">{{ skill }}</div>
+                                            <div class="custom-tooltip-content">
+                                                {% if skill.description %}
+                                                    {{ skill.description }}
+                                                {% else %}
+                                                    Подробное описание навыка {{ skill }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="accordion-item">
-                            <h6 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#softwareCollapse">
-                                    Software
-                                </button>
-                            </h6>
-                            <div id="softwareCollapse" class="accordion-collapse collapse">
-                                <div class="accordion-body">
+                    <div class="accordion-item">
+                        <h6 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#softwareCollapse">
+                                Software
+                            </button>
+                        </h6>
+                        <div id="softwareCollapse" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <div class="search-box mb-3">
+                                    <input type="text" class="form-control" placeholder="Поиск по навыкам Software..." data-search-category="software">
+                                    <i class="bi bi-search"></i>
+                                </div>
+                                <div class="radio-cards-container radio-cards-sm" style="--grid-columns: 3;">
                                     {% for skill in skill_categories.software %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="sw_skill" value="{{ skill }}">
-                                        <label class="form-check-label text-light">{{ skill }}</label>
+                                    <div class="tooltip-wrapper">
+                                        <label class="radio-card">
+                                            <input type="radio" name="skill_software" value="{{ skill }}"
+                                                   class="d-none" data-category="software"
+                                                   {% if skill in selected_skills %}checked{% endif %}>
+                                            <div class="card-content">
+                                                <i class="bi bi-code-square"></i>
+                                                <h3 class="card-title">{{ skill }}</h3>
+                                            </div>
+                                        </label>
+                                        <div class="custom-tooltip tooltip-right">
+                                            <div class="custom-tooltip-title">{{ skill }}</div>
+                                            <div class="custom-tooltip-content">
+                                                {% if skill.description %}
+                                                    {{ skill.description }}
+                                                {% else %}
+                                                    Подробное описание навыка {{ skill }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="accordion-item">
-                            <h6 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#processesCollapse">
-                                    Processes
-                                </button>
-                            </h6>
-                            <div id="processesCollapse" class="accordion-collapse collapse">
-                                <div class="accordion-body">
+                    <div class="accordion-item">
+                        <h6 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#processesCollapse">
+                                Processes
+                            </button>
+                        </h6>
+                        <div id="processesCollapse" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <div class="search-box mb-3">
+                                    <input type="text" class="form-control" placeholder="Поиск по навыкам Processes..." data-search-category="processes">
+                                    <i class="bi bi-search"></i>
+                                </div>
+                                <div class="radio-cards-container radio-cards-sm" style="--grid-columns: 3;">
                                     {% for skill in skill_categories.processes %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="process" value="{{ skill }}">
-                                        <label class="form-check-label text-light">{{ skill }}</label>
+                                    <div class="tooltip-wrapper">
+                                        <label class="radio-card">
+                                            <input type="radio" name="skill_processes" value="{{ skill }}"
+                                                   class="d-none" data-category="processes"
+                                                   {% if skill in selected_skills %}checked{% endif %}>
+                                            <div class="card-content">
+                                                <i class="bi bi-gear"></i>
+                                                <h3 class="card-title">{{ skill }}</h3>
+                                            </div>
+                                        </label>
+                                        <div class="custom-tooltip tooltip-right">
+                                            <div class="custom-tooltip-title">{{ skill }}</div>
+                                            <div class="custom-tooltip-content">
+                                                {% if skill.description %}
+                                                    {{ skill.description }}
+                                                {% else %}
+                                                    Подробное описание навыка {{ skill }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                     {% endfor %}
                                 </div>
@@ -106,14 +181,16 @@
         </div>
     </div>
 
-    <div class="main-card">
-        <div class="card employees-card">
-            <div class="card-body">
-                <div class="cards-container">
-                    {% for employee in employees %}
-                    <div class="employee-card" onclick="location.href='about?id={{ employee.id }}'">
+    <!-- Правая колонка с карточками сотрудников -->
+    <div class="card card-glow card-main">
+        <div class="card-body">
+            <h4 class="text-light mb-4">Сотрудники</h4>
+            <div class="cards-grid-2rows">
+                {% for employee in employees %}
+                <div class="tooltip-wrapper">
+                    <div class="card employee-card" onclick="location.href='about?id={{ employee.id }}'">
                         <div class="employee-info">
-                            <div class="avatar-placeholder">
+                            <div class="avatar avatar-md avatar-circle">
                                 {{ employee.name|first }}
                             </div>
                             <div class="text-content">
@@ -139,7 +216,7 @@
 
                         {% if employee.certificates %}
                         <div class="certificates-section">
-                            <h5>Сертификаты ({{ employee.total_certificates }})</h5>
+                            <h5>Серти��икаты ({{ employee.total_certificates }})</h5>
                             {% for cert in employee.certificates %}
                             <div class="certificate-item">
                                 <span>{{ cert.name }}</span>
@@ -149,8 +226,14 @@
                         </div>
                         {% endif %}
                     </div>
-                    {% endfor %}
+                    <div class="custom-tooltip tooltip-right">
+                        <div class="custom-tooltip-title">{{ employee.department }}</div>
+                        <div class="custom-tooltip-content">
+                            {{ employee.department.full_name }}
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>

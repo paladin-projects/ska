@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Инициализация цветовых констант
+GREEN=$(TERM=xterm-256color tput setaf 2)
 YELLOW=$(TERM=xterm-256color tput setaf 3)
+RED=$(TERM=xterm-256color tput setaf 1)
 RESET=$(TERM=xterm-256color tput sgr0)
 
 cd /app
@@ -36,33 +38,96 @@ download_vendors() {
 
             mkdir -p "/app/static/vendor/$(dirname "$path")"
             if curl -L -f --retry 3 --retry-delay 2 "$url" -o "/app/static/vendor/$path"; then
-                echo "Successfully downloaded $path"
+                echo "${GREEN}Successfully downloaded $path${RESET}"
             else
-                echo "${YELLOW}✗ WARNING: Failed to download $path${RESET}"
+                echo "${RED}ERROR: Failed to download $path${RESET}"
             fi
         fi
     done < <(grep -v '^\s*#\|^\s*$' .vendors)
 
     echo "-----------------------------------"
-    echo "Finished downloading vendor files"
+    echo "${GREEN}Finished downloading vendor files${RESET}"
     echo "Vendor directory contents:"
     ls -R /app/static/vendor/
 }
 
 setup_django() {
     echo 'Collecting static files...'
-    python manage.py collectstatic --noinput --clear
+
+    echo "Checking staticfiles directory..."
+    ls -la /app/staticfiles
+
+    echo "Checking source static directory..."
+    ls -la /app/static
+
+    echo "Running collectstatic..."
+    python manage.py collectstatic --noinput --clear -v 2
+
+    # Проверка успешности сбора статических файлов
+    if [ $? -ne 0 ]; then
+        echo "${RED}ERROR: Failed to collect static files${RESET}"
+        return 1
+    fi
+
+    # Установка права доступа к статическим файлам
+    echo "Setting permissions for static files..."
+    chown -R www-data:www-data /app/staticfiles
+    chmod -R 555 /app/staticfiles  # r-xr-xr-x - только для чтения для всех
+
+    echo "${GREEN}Static files collected successfully${RESET}"
+    echo "Contents of staticfiles directory:"
+    ls -la /app/staticfiles
+
+    # Проверка прав доступа
+    echo "Checking permissions..."
+    stat /app/staticfiles
+    stat /app/static
+
+    echo "Checking Apache configuration..."
+    apache2ctl -t
 
     echo 'Running migrations...'
     python manage.py migrate
+
+    echo 'Initializing database...'
+    if ! python manage.py setdb --force; then
+        echo "${RED}ERROR: Failed to initialize database${RESET}"
+        return 1
+    fi
+    echo "${GREEN}Database initialized successfully${RESET}"
 }
 
 run_server() {
+    # Настройка и запуск Apache
+    echo 'Configuring and starting Apache...'
+
+    # Инициализация необходимых модулей Apache
+    a2enmod proxy
+    a2enmod proxy_http
+    a2enmod headers
+    a2enmod alias
+    a2enmod expires
+    a2enmod mime
+
+    # Копирование конфигурации и запуск Apache
+    cp /app/ska/management/release/apache.conf /etc/apache2/sites-available/000-default.conf
+    rm -f /var/run/apache2/apache2.pid
+    service apache2 start
+
+    # Проверка статуса Apache
+    if ! service apache2 status > /dev/null; then
+        echo "${RED}ERROR: Apache failed to start${RESET}"
+        echo "Apache error log:"
+        tail -n 50 /var/log/apache2/error.log
+        return 1
+    fi
+
+    echo "${GREEN}Apache started successfully${RESET}"
+
     if grep -q 'DJANGO_DEBUG=True' .env; then
         echo 'Starting development server...'
         python manage.py runserver 0.0.0.0:8000
     else
-        echo 'Starting release server...'
         python manage.py runrelease
     fi
 }

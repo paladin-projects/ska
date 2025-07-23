@@ -1,0 +1,77 @@
+/* Специфичные стили для сертификатов
+-------------------------------------------------- */
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+    height: calc(100vh - 2rem);
+}
+
+.certificate-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.certificate-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.certificate-preview {
+    text-align: center;
+}
+
+.certificate-preview img {
+    max-height: 150px;
+    object-fit: contain;
+}
+
+/* Фильтры */
+.search-box {
+    position: relative;
+}
+
+.search-box i {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-group {
+    margin-bottom: 2rem;
+}
+
+.filter-group h5 {
+    margin-bottom: 1rem;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .card-sidebar {
+        margin-bottom: 1.5rem;
+    }
+}

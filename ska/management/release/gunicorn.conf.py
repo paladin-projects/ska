@@ -4,7 +4,7 @@ import multiprocessing
 import os
 
 # Сокет сервера
-bind = "0.0.0.0:8000"
+bind = "127.0.0.1:8000"
 backlog = 2048
 
 # Рабочие процессы
@@ -32,7 +32,6 @@ umask = 0
 user = None
 group = None
 
-# Серверные хуки
 def on_starting(server):
     """Логирование запуска сервера"""
     server.log.info("Starting release server...")

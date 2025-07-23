@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load self_assessment_filters %}
+
+{% block title %}{{ direction.name }} - Самооценка{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/self_assessment_direction.css' %}" />
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tooltip.js' %}"></script>
+<script src="{% static 'js/self_assessment.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="assessment-container">
+    <form id="assessment-form" data-direction="{{ direction.name|lower }}">
+        {% csrf_token %}
+        <div class="main-content">
+            <div class="cards-split-equal">
+
+                <!-- Карточка с фильтрацией -->
+                <div class="card card-equal card-glow">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center mb-3">
+                            <a href="{% url 'self_assessment' %}" class="back-button d-flex align-items-center me-3" data-action="back">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                <span>Назад к выбору направления</span>
+                            </a>
+                        </div>
+                        <h3 class="h4 mb-0 direction-title">{{ direction.name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text" class="form-control search-input" placeholder="Поиск..." data-search="tasks">
+                        </div>
+                        <div class="tasks-list chips-container" data-tasks-container>
+                            <!-- Чипы задач будут добавлены динамически -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Карточка с продуктами -->
+                <div class="card card-equal card-glow">
+                    <div class="card-header">
+                        <h2 class="h4 mb-0">Продукты</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="products-block" id="products_{{ direction.name|lower }}" data-direction="{{ direction.name|lower }}">
+                            {% for product, disciplines in direction.items.items %}
+                                <div class="tooltip-wrapper">
+                                    <div class="card product-card" data-tasks="{{ disciplines|join:',' }}" data-product="{{ product }}">
+                                        <div class="card-body d-flex align-items-center">
+                                            <div class="card-icon me-3">
+                                                {% if direction.name == 'Hardware' %}
+                                                    <i class="bi bi-hdd"></i>
+                                                {% elif direction.name == 'Software' %}
+                                                    <i class="bi bi-window"></i>
+                                                {% else %}
+                                                    <i class="bi bi-diagram-3"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="card-info flex-grow-1">
+                                                <h5 class="card-title mb-1">{{ product }}</h5>
+                                                <p class="card-text">
+                                                    <i class="bi bi-list-task"></i>
+                                                    {{ disciplines|length|pluralize:"задача" }}
+                                                </p>
+                                            </div>
+                                            <div class="card-action ms-2">
+                                                <i class="bi bi-chevron-right text-muted"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="custom-tooltip tooltip-bottom">
+                                        <div class="custom-tooltip-title">{{ product }}</div>
+                                        <div class="custom-tooltip-content">
+                                            Задачи: {{ disciplines|join:', ' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="restoreModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Восстановление данных</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Найдена незавершенная форма. Хотите продолжить?</p>
+                <p class="text-muted">(В случае отказа данные будут стёрты)</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom btn-custom-primary" id="modal-accept">Продолжить</button>
+                <button type="button" class="btn btn-custom btn-custom-secondary" id="modal-decline">Очистить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,14 +4,16 @@
 {% block title %}Сертификаты{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/cards.css' %}" />
+<link rel="stylesheet" href="{% static 'css/certificate.css' %}" />
 {% endblock %}
 
 {% block content %}
-<div class="employee-evaluation-container">
-    <div class="main-card">
-        <div class="card filters-card">
-            <div class="card-body">
+<div class="cards-container">
+
+    <!-- Карточка с фильтрами -->
+    <div class="card card-glow">
+        <div class="card-body">
+            <div class="content-wrapper">
                 <h4 class="text-light mb-4">Фильтры</h4>
 
                 <div class="search-box mb-4">
@@ -74,9 +76,10 @@
         </div>
     </div>
 
-    <div class="main-card">
-        <div class="card employees-card">
-            <div class="card-body">
+    <!-- Основная карточка с сертификатами -->
+    <div class="card card-glow">
+        <div class="card-body">
+            <div class="content-wrapper">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="text-light mb-0">Мои сертификаты</h4>
                     <button type="button" class="btn btn-custom btn-custom-primary" id="upload-certificate">
@@ -84,11 +87,11 @@
                     </button>
                 </div>
 
-                <div class="cards-container">
+                <div class="cards-grid">
                     {% for certificate in certificates %}
-                    <div class="employee-card certificate-card" onclick="location.href='about?id={{ certificate.id }}'">
+                    <div class="certificate-card" onclick="location.href='about?id={{ certificate.id }}'">
                         <div class="certificate-info">
-                            <h4>{{ certificate.training_name }}</h4>
+                            <h4 class="card-title">{{ certificate.training_name }}</h4>
                             <p class="text-muted">{{ certificate.date|date:"d.m.Y" }}</p>
                             <div class="badge bg-primary">{{ certificate.get_training_type_display }}</div>
                             <div class="badge bg-secondary">{{ certificate.category.category }}</div>
@@ -114,11 +117,12 @@
     </div>
 </div>
 
+<!-- Модальное окно добавления сертификата -->
 <div class="modal fade" id="certificateModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Загрузка сертификата</h5>
+                <h5 class="modal-title text-light">Загрузка сертификата</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -131,26 +135,26 @@
 
                     <div class="mb-4">
                         <label class="form-label">Тип сертификата</label>
-                        <div class="radio-cards">
+                        <div class="radio-cards-container radio-cards-sm">
                             <label class="radio-card">
                                 <input type="radio" name="training_type" value="CER" required>
                                 <div class="radio-card-content">
                                     <i class="bi bi-award"></i>
-                                    <span>Сертификация</span>
+                                    <span class="card-title">Сертификация</span>
                                 </div>
                             </label>
                             <label class="radio-card">
                                 <input type="radio" name="training_type" value="TR">
                                 <div class="radio-card-content">
                                     <i class="bi bi-mortarboard"></i>
-                                    <span>Тренинг</span>
+                                    <span class="card-title">Тренинг</span>
                                 </div>
                             </label>
                             <label class="radio-card">
                                 <input type="radio" name="training_type" value="EX">
                                 <div class="radio-card-content">
                                     <i class="bi bi-pencil-square"></i>
-                                    <span>Экзамен</span>
+                                    <span class="card-title">Экзамен</span>
                                 </div>
                             </label>
                         </div>
@@ -192,7 +196,7 @@
                     </div>
 
                     <div class="modal-footer px-0 pb-0 mt-4">
-                        <button type="button" class="btn btn-custom btn-custom-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Отмена</button>
                         <button type="submit" class="btn btn-custom btn-custom-primary">Загрузить</button>
                     </div>
                 </form>
@@ -200,7 +204,6 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}

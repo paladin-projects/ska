@@ -67,8 +67,8 @@ A Docker-based assessment system
    ```
 
 4. Access the application:
-   - 🌐 [Main Interface](http://127.0.0.1:8000/)
-   - ⚙️ [Admin Panel](http://127.0.0.1:8000/admin)
+   - 🌐 [Main Interface](http://127.0.0.1:80/)
+   - ⚙️ [Admin Panel](http://127.0.0.1:80/admin)
 
 ### Windows Setup
 > Docker is required, see [Docker Installation](DOCKER_INSTALL.md)
@@ -92,8 +92,8 @@ A Docker-based assessment system
    ```
 
 3. Access the application:
-   - 🌐 [Main Interface](http://127.0.0.1:8000/)
-   - ⚙️ [Admin Panel](http://127.0.0.1:8000/admin)
+   - 🌐 [Main Interface](http://127.0.0.1:80/)
+   - ⚙️ [Admin Panel](http://127.0.0.1:80/admin)
 
 > **Note**: First build may take several minutes depending on your internet connection and system performance
 
@@ -144,6 +144,63 @@ docker compose exec web python manage.py setenv --debug  # Debug mode (debug run
 # Generate secret key
 docker compose exec web python manage.py keygen
 docker compose exec web python manage.py keygen --force  # Force regenerate
+```
+
+### Database Management
+
+> **Note**:
+> - All backup operations automatically create a `backups/{db_name}` directory if it doesn't exist
+> - When restoring from a backup, the current state is automatically backed up
+> - In case of restore failure, automatic rollback to previous state occurs
+> - Backups with infinite retention are specially marked
+> - The `-list` command shows information about size, age, and remaining retention period of backups
+
+```bash
+# Initialize Database
+docker compose exec web python manage.py setdb  # Default initialization (uses db/ska-init.sql and db/db.sqlite3)
+docker compose exec web python manage.py setdb --source path/to/init.sql --db path/to/database.sqlite3  # Custom source and path
+docker compose exec web python manage.py setdb --force  # Force initialization (overwrite existing database)
+
+# Create Backup
+docker compose exec web python manage.py setdb --backup  # Create backup with default retention (30 days)
+docker compose exec web python manage.py setdb --backup -days 10  # Create backup with 10 days retention
+docker compose exec web python manage.py setdb --backup -days -1  # Create backup with infinite retention
+
+# List Backups
+docker compose exec web python manage.py setdb --backup -list  # Show latest backup info
+docker compose exec web python manage.py setdb --backup -list -latest  # Show latest backup info (alternative)
+docker compose exec web python manage.py setdb --backup -list -all  # List all backups with retention info
+docker compose exec web python manage.py setdb --backup -list 20240101_120000  # Show specific backup info
+
+# Delete Backups
+docker compose exec web python manage.py setdb --backup -delete  # Delete latest backup (requires confirmation)
+docker compose exec web python manage.py setdb --backup -delete -latest  # Delete latest backup (alternative)
+docker compose exec web python manage.py setdb --backup -delete -all  # Delete all backups (requires confirmation)
+docker compose exec web python manage.py setdb --backup -delete 20240101_120000  # Delete specific backup
+
+# Restore from Backup
+docker compose exec web python manage.py setdb --backup -restore  # Restore from latest backup (auto-backup before restore)
+docker compose exec web python manage.py setdb --backup -restore -latest  # Restore from latest backup (alternative)
+docker compose exec web python manage.py setdb --backup -restore 20240101_120000  # Restore from specific backup
+
+# Manage Retention Periods
+docker compose exec web python manage.py setdb --backup -days 15  # Create new backup with 15 days retention
+docker compose exec web python manage.py setdb --backup -days 15 -latest  # Set 15 days retention for latest backup
+docker compose exec web python manage.py setdb --backup -days 15 -all  # Set 15 days retention for all backups
+docker compose exec web python manage.py setdb --backup -days 15 20240101_120000  # Set 15 days retention for specific backup
+docker compose exec web python manage.py setdb --backup -days -1 -latest  # Set infinite retention for latest backup
+
+# Dry Run Mode (Simulation)
+docker compose exec web python manage.py setdb --dry-run  # Simulate database initialization
+docker compose exec web python manage.py setdb --backup --dry-run  # Simulate backup creation
+docker compose exec web python manage.py setdb --backup -restore -latest --dry-run  # Simulate restore operation
+docker compose exec web python manage.py setdb --backup -delete -latest --dry-run  # Simulate backup deletion
+docker compose exec web python manage.py setdb --backup -days 15 -latest --dry-run  # Simulate retention period change
+
+# Combined Operations
+docker compose exec web python manage.py setdb --force --dry-run  # Simulate forced initialization
+docker compose exec web python manage.py setdb --backup -days 15 -latest --dry-run  # Simulate retention change for latest backup
+docker compose exec web python manage.py setdb --backup -restore -latest --dry-run  # Simulate restore from latest backup with auto-backup
 ```
 
 ### Server Management

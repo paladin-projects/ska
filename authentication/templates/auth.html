@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-card">
-        <h3 class="auth-title">Вход в систему</h3>
+<div class="cards-centered-container">
+    <div class="card card-centered">
+        <h3 class="card-title">Вход в систему</h3>
         <form id="login-form" method="POST" action="{% url 'auth:login' %}">
             {% csrf_token %}
             <div class="form-group">
@@ -26,9 +26,9 @@
                     </button>
                 </div>
             </div>
-            <button type="submit" class="btn-auth btn-auth-primary">Войти</button>
-            <div class="auth-links">
-                <a href="{% url 'auth:registration' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="auth-link">Регистрация</a>
+            <button type="submit" class="btn btn-custom btn-glare btn-glare-primary">Войти</button>
+            <div class="interactive-links">
+                <a href="{% url 'auth:registration' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="interactive-link">Регистрация</a>
             </div>
         </form>
     </div>

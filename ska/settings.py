@@ -84,8 +84,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'certificate.middleware.CertificateMiddleware',
-    'middleware.auth.AuthenticationMiddleware',
-    'middleware.background.BackgroundMiddleware',
+    'authentication.middleware.AuthenticationMiddleware',
+    'ska.middleware.BackgroundMiddleware',
 ]
 
 ROOT_URLCONF = 'ska.urls'
@@ -151,25 +151,16 @@ USE_TZ = True
 
 
 # Статические файлы (css, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
+# Директория для сбора статических файлов
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-if not os.path.exists(STATIC_ROOT):
-    os.makedirs(STATIC_ROOT)
-
+# Дополнительные директории для поиска статических файлов
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Обеспечение обработки статических файлов в режиме отладки
-if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / 'static',
-    ]
-
-else:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 # Тип поля первичного ключа по умолчанию
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

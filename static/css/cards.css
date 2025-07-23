@@ -1,54 +1,334 @@
-.employee-evaluation-container {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
-    padding: 1rem;
-    height: calc(100vh - 2rem);
-    overflow-x: auto;
-}
+/* Базовые стили карточек
+-------------------------------------------------- */
 
-.main-card {
-    flex: 1;
-    height: 100%;
-    min-width: 300px;
-}
-
-.filters-card,
-.employees-card {
-    flex: 1;
-    height: 100%;
-    min-width: 300px;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
+/* Основная карточка */
+.card {
+    background-color: rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-.filters-card .card-body,
-.employees-card .card-body {
+/* Эффект свечения при наведении */
+.card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border-radius: inherit;
+    z-index: -1;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+/* Эффекты при наведении */
+.card:hover {
+    transform: translateY(-5px);
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: var(--dominant-color, rgba(255, 255, 255, 0.2));
+}
+
+.card:hover::after {
+    opacity: 1;
+    box-shadow:
+        0 0 15px var(--dominant-color, rgba(255, 255, 255, 0.1)),
+        0 0 30px var(--dominant-color, rgba(255, 255, 255, 0.05));
+}
+
+/* Элементы карточки
+-------------------------------------------------- */
+
+/* Заголовок */
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    transition: all 0.3s ease;
+}
+
+/* Тело карточки */
+.card-body {
     padding: 1.5rem;
-    height: 100%;
-    overflow-y: auto;
 }
 
-.cards-container {
+/* Контент карточки */
+.card-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+/* Иконка карточки */
+.card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    font-size: 1.5rem;
+    color: var(--dominant-color, rgba(255, 255, 255, 0.7));
+    transition: all 0.3s ease;
+}
+
+/* Информация карточки */
+.card-info {
+    flex: 1;
+}
+
+.card-name {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.25rem;
+}
+
+.card-description {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Эффекты при наведении */
+.card:hover .card-icon {
+    background: var(--dominant-color, rgba(255, 255, 255, 0.1));
+    color: var(--dominant-color, rgba(255, 255, 255, 0.9));
+}
+
+.card:hover .card-name {
+    color: var(--dominant-color, #ffffff);
+}
+
+.card:hover .card-description {
+    color: var(--dominant-color, rgba(255, 255, 255, 0.8));
+}
+
+/* Сетки карточек
+-------------------------------------------------- */
+
+/* Базовая сетка */
+.cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
 }
 
-.employee-card {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+/* Горизонтальная сетка */
+.cards-row {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding: 0.5rem;
 }
 
-.employee-card:hover {
+.cards-row .card {
+    flex: 0 0 300px;
+}
+
+/* Вертикальная сетка */
+.cards-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+/* Двухколоночная сетка с фиксированной левой колонкой
+-------------------------------------------------- */
+.cards-split {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+/* Левая карточка */
+.cards-split .card-sidebar {
+    height: fit-content;
+    max-height: 100%;
+    position: sticky;
+    top: 1.5rem;
+}
+
+/* Правая карточка */
+.cards-split .card-main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Контейнер с прокруткой */
+.cards-split .card-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Двухколоночная сетка с равными колонками
+-------------------------------------------------- */
+.cards-split-equal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+/* Общие стили для карточек в равном разделении */
+.cards-split-equal .card {
+    height: calc(100vh - 120px);
+    overflow: auto;
+}
+
+/* Левая карточка */
+.cards-split-equal .card-sidebar {
+    position: relative;
+}
+
+/* Правая карточка */
+.cards-split-equal .card-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.cards-split-equal .card-main .card-body {
+    padding: 1rem;
+    overflow: auto;
+}
+
+/* Двухрядная сетка для карточек
+-------------------------------------------------- */
+.cards-grid-2rows {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: min-content;
+    gap: 1.5rem;
+    padding: 0.5rem;
+}
+
+.cards-grid-2rows > .card {
+    height: auto;
+    min-height: 0;
+}
+
+/* Медиа-запросы
+-------------------------------------------------- */
+
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-row {
+        flex-direction: column;
+    }
+
+    .cards-row .card {
+        flex: none;
+        width: 100%;
+    }
+
+    .cards-split {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-split .card-sidebar {
+        position: static;
+        width: 100%;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1199px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cards-split {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
+@media (max-width: 1200px) {
+    .cards-split-equal {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-split-equal .card {
+        height: auto;
+        max-height: none;
+    }
+
+    .cards-grid-2rows {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+}
+
+/* Центрированная карточка
+-------------------------------------------------- */
+.card-centered {
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.card-centered::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        var(--dominant-color),
+        transparent
+    );
+    mask: linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+                 linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-centered:hover {
     transform: translateY(-5px);
     border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
     box-shadow:
@@ -56,219 +336,114 @@
         0 0 35px var(--secondary-color, rgba(255, 255, 255, 0.2));
 }
 
-.employee-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+.card-centered:hover::before {
+    opacity: 1;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        var(--dominant-color),
+        var(--dominant-color),
+        transparent
+    );
 }
 
-.avatar-placeholder {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--dominant-color, rgba(255, 255, 255, 0.3));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    color: white;
-    box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
-}
-
-.text-content h4 {
-    color: white;
-    margin: 0;
-    font-size: 1.1rem;
-}
-
-.text-content .department {
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-.skills-section,
-.certificates-section {
-    margin-top: 1.5rem;
-}
-
-.skills-section h5,
-.certificates-section h5 {
-    color: white;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-}
-
-.skill-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.badge {
-    padding: 0.5rem 0.75rem;
-    font-weight: 500;
-    font-size: 0.85rem;
-}
-
-.search-box {
-    position: relative;
-    margin-bottom: 1.5rem;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    padding-right: 2.5rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
-.search-box input:focus {
-    outline: none;
-    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
-    box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.2));
-}
-
-.search-box i {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-}
-
-.filter-group {
+.card-centered .card-title {
+    text-align: center;
     margin-bottom: 2rem;
-}
-
-.filter-group h4,
-.filter-group h5 {
+    font-size: 1.5rem;
+    text-shadow: none;
     color: white;
-    margin-bottom: 1rem;
-}
-
-.filter-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.chip:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.chip input {
-    display: none;
-}
-
-.chip input:checked + span {
-    color: var(--dominant-color, rgba(255, 255, 255, 0.9));
-}
-
-.cards-container::-webkit-scrollbar,
-.filters-card .card-body::-webkit-scrollbar {
-    width: 6px;
-}
-
-.cards-container::-webkit-scrollbar-track,
-.filters-card .card-body::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
-}
-
-.cards-container::-webkit-scrollbar-thumb,
-.filters-card .card-body::-webkit-scrollbar-thumb {
-    background: var(--dominant-color, rgba(255, 255, 255, 0.3));
-    border-radius: 3px;
-}
-
-.cards-container::-webkit-scrollbar-thumb:hover,
-.filters-card .card-body::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-color, rgba(255, 255, 255, 0.4));
-    box-shadow: 0 0 10px var(--dominant-color, rgba(255, 255, 255, 0.3));
-}
-
-.accordion-item {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 0.5rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.accordion-button {
-    background: rgba(0, 0, 0, 0.3);
+.card-centered:hover .card-title {
+    color: var(--dominant-color);
+    text-shadow:
+        0 0 10px var(--dominant-color),
+        0 0 20px var(--dominant-color),
+        0 0 30px var(--dominant-color);
+    letter-spacing: 0.5px;
+    transform: translateY(-1px);
+}
+
+/* Контейнер для центрирования карточки */
+.cards-centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 4rem);
+    padding: 2rem;
+}
+
+/* Стили форм внутри центрированной карточки */
+.card-centered .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.card-centered .form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    border: none;
-    box-shadow: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.accordion-button:not(.collapsed) {
-    background: rgba(0, 0, 0, 0.4);
+.card-centered .form-control:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(var(--dominant-color-rgb), 0.3);
+}
+
+.card-centered .form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--dominant-color);
     color: white;
-    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 0 15px rgba(var(--dominant-color-rgb), 0.3);
 }
 
-.accordion-button::after {
-    filter: invert(1);
-}
-
-.accordion-button:focus {
-    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
-    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
-}
-
-.accordion-body {
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.accordion-item:hover {
-    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
-    box-shadow: 0 0 20px var(--dominant-color, rgba(255, 255, 255, 0.3));
-}
-
-.accordion .form-check-input {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.accordion .form-check-input:checked {
-    background-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
-    border-color: var(--dominant-color, rgba(255, 255, 255, 0.3));
-}
-
-.accordion .form-check-label {
+.card-centered .form-label {
     color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
 }
 
-@media (max-width: 1200px) {
-    .cards-container {
-        grid-template-columns: 1fr;
+.card-centered .form-control[type="password"] {
+    padding-right: 2.5rem;
+}
+
+/* Аккордеон внутри центрированной карточки */
+.card-centered .accordion {
+    margin-top: 0.5rem;
+}
+
+.card-centered .accordion-item {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--dominant-color, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-centered .accordion-collapse {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
+/* Медиа-запросы */
 @media (max-width: 768px) {
-    .employee-evaluation-container {
-        grid-template-columns: 1fr;
-    }
-
-    .filters-card {
-        height: auto;
+    .card-centered {
+        margin: 1rem;
+        padding: 1.5rem;
     }
 }

@@ -1,9 +1,7 @@
 import { initializePasswordValidation, initializePasswordToggles } from '/static/js/passwordValidation.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-
     // Инициализация компонентов
-    const navItems = document.querySelectorAll('input[name="profile-section"]');
     const sections = document.querySelectorAll('.profile-section');
 
     /**
@@ -25,27 +23,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Отображнение активной секции при загрузке
-    const checkedNav = document.querySelector('input[name="profile-section"]:checked');
-    if (checkedNav) {
-        showSection(checkedNav.value);
-    }
-
-    else {
-        // Отображение первой секции, если нет выбранной
-        const firstNav = navItems[0];
-
-        if (firstNav) {
-            firstNav.checked = true;
-            showSection(firstNav.value);
-        }
-    }
-
     // Обработчики событий для навигации
-    navItems.forEach(item => {
-        item.addEventListener('change', function() {
+    document.querySelectorAll('input[name="profile-section"]').forEach(input => {
+        input.addEventListener('change', function() {
             showSection(this.value);
         });
+
+        // Инициализация начального состояния
+        if (input.checked) {
+            showSection(input.value);
+        }
     });
 
     initializePasswordToggles();
